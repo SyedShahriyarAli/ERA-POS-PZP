@@ -1,0 +1,27 @@
+﻿@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<RadzenTemplateForm TItem="string" Data="@password" Submit="@Authorize">
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenPassword Placeholder="Password" @bind-value="@password" style="width:100%" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow JustifyContent="JustifyContent.End">
+            <RadzenButton Icon="key" Text="Proceed" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Flat" ButtonType="ButtonType.Submit"></RadzenButton>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    string password = "";
+
+    void Authorize()
+    {
+        if (password == "123")
+            DialogService.Close(true);
+        else
+            NotificationService.Notify(NotificationSeverity.Error, "Invalid Password!");
+    }
+}

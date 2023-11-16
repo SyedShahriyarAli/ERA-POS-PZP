@@ -1,0 +1,23 @@
+﻿@inject DialogService DialogService
+
+<RadzenTemplateForm TItem="double" Data="@floatAmount" Submit="@OpenRegister">
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenNumeric placeholder="0.00" @bind-value="@floatAmount" style="width:100%" TValue="double" Min="0" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow JustifyContent="JustifyContent.End">
+            <RadzenButton Icon="key" Text="Open Register" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Flat" ButtonType="ButtonType.Submit"></RadzenButton>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    double floatAmount;
+
+    void OpenRegister()
+    {
+        DialogService.Close(floatAmount);
+    }
+}

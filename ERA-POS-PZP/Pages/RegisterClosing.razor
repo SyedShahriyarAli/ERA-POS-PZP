@@ -1,0 +1,113 @@
+﻿@inject DialogService DialogService
+
+<RadzenStack>
+    <RadzenRow Gap="0.5rem">
+        <RadzenColumn Size="6">
+            <RadzenCard Variant="Variant.Flat">
+                <RadzenStack>
+                    @foreach (var denomination in cashDenominations)
+                    {
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="4">
+                                <RadzenText Text="@denomination.Nominal.ToString("#,##0.#0")" />
+                            </RadzenColumn>
+
+                            <RadzenColumn Size="4">
+                                <RadzenNumeric TValue="int" @bind-Value="@denomination.Qty" Min="0" TextAlign="TextAlign.Center" />
+                            </RadzenColumn>
+
+                            <RadzenColumn Size="4">
+                                <RadzenText TextAlign="TextAlign.End">Rs. @((denomination.Qty * denomination.Nominal).ToString("#,##0.#0"))</RadzenText>
+                                </RadzenColumn>
+                            </RadzenRow>
+                    }
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="6">
+            <RadzenCard Variant="Variant.Flat" Style="background-color: var(--rz-info-lighter)">
+                <RadzenStack>
+                    <RadzenRow>
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="Cash" />
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="@(cashDenominations.Sum(x => x.Nominal * x.Qty).ToString("#,##0.#0"))" TextAlign="TextAlign.End" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow>
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="Cashless" />
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="5,000.00" TextAlign="TextAlign.End" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow>
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="Prepaid Card" />
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="5,000.00" TextAlign="TextAlign.End" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow>
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="Card" />
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="5,000.00" TextAlign="TextAlign.End" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow>
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="Voucher" />
+                        </RadzenColumn>
+
+                        <RadzenColumn Size="6">
+                            <RadzenText Text="5,000.00" TextAlign="TextAlign.End" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow JustifyContent="JustifyContent.End">
+        <RadzenButton Text="Submit" Icon="save" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Flat" Click="@CloseRegister" />
+    </RadzenRow>
+</RadzenStack>
+
+@code {
+    List<CashDenomination> cashDenominations = new()
+    {
+        new CashDenomination(){Nominal = 5000},
+        new CashDenomination(){Nominal = 1000},
+        new CashDenomination(){Nominal = 500},
+        new CashDenomination(){Nominal = 100},
+        new CashDenomination(){Nominal = 50},
+        new CashDenomination(){Nominal = 20},
+        new CashDenomination(){Nominal = 10},
+        new CashDenomination(){Nominal = 5},
+    };
+
+    class CashDenomination
+    {
+        public int Nominal { get; set; }
+        public int Qty { get; set; }
+    }
+
+    void CloseRegister()
+    {
+        DialogService.Close(true);
+    }
+}

@@ -1,0 +1,26 @@
+﻿@using ERA_POS_PZP.Data
+
+@inject DialogService DialogService
+@inject NavigationManager NavigationManager
+
+<RadzenTemplateForm TItem="int" Data="@seatNo" Submit="@Submit">
+    <RadzenStack>
+        <RadzenRow>
+            <RadzenColumn Size="12">
+                <RadzenNumeric placeholder="Seat Number" @bind-value="@seatNo" style="width:100%" TValue="int" Min="1" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow JustifyContent="JustifyContent.End">
+            <RadzenButton Icon="save" Text="Proceed" ButtonStyle="ButtonStyle.Primary" Variant="Variant.Flat" ButtonType="ButtonType.Submit"></RadzenButton>
+        </RadzenRow>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    int seatNo = 1;
+
+    void Submit()
+    {
+        DialogService.Close(seatNo);
+    }
+}

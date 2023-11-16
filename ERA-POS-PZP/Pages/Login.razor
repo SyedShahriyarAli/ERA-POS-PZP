@@ -1,0 +1,73 @@
+﻿@layout LoginLayout
+@page "/"
+@page "/login"
+
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+
+<PageTitle>ERA | Login</PageTitle>
+
+<RadzenText Text="Login" TextStyle="Radzen.Blazor.TextStyle.H5" class="mb-4" TagName="Radzen.Blazor.TagName.H2" />
+<RadzenRow>
+    <RadzenColumn SizeMD="12">
+        <RadzenTemplateForm Submit="@HandleLogin" TItem="LoginDto" Data="@loginDto">
+            <RadzenAlert Shade="Radzen.Shade.Lighter" Variant="Radzen.Variant.Flat" Size="Radzen.AlertSize.Small" AlertStyle="Radzen.AlertStyle.Danger" Visible="@errorVisible">@error</RadzenAlert>
+            <RadzenStack Gap="1rem">
+                <RadzenFormField Variant="Variant.Flat" Text="Username">
+                    <ChildContent>
+                        <RadzenTextBox style="display: block; width: 100%" @bind-Value="@loginDto.Username" Name="username" />
+                    </ChildContent>
+                </RadzenFormField>
+                <RadzenRequiredValidator Component="username" Text="Username is required" Popup="false" />
+
+                <RadzenFormField Variant="Variant.Flat" Text="Password">
+                    <ChildContent>
+                        <RadzenPassword style="display: block; width: 100%" @bind-Value="@loginDto.Password" Name="password" />
+                    </ChildContent>
+                </RadzenFormField>
+                <RadzenRequiredValidator Component="password" Text="Password is required" Popup="false" />
+
+                <RadzenRow SizeMD="12" JustifyContent="JustifyContent.End">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="login" Text="Login" Variant="Variant.Flat" IsBusy="@isSubmitting" />
+                </RadzenRow>
+            </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    LoginDto loginDto = new() { Username = "waiter", Password = "123" };
+    bool errorVisible = false;
+    string error = "";
+    bool isSubmitting = false;
+
+    void HandleLogin()
+    {
+        isSubmitting = true;
+        errorVisible = false;
+        if (users.Any(x => x.Username == loginDto.Username && x.Password == loginDto.Password))
+        {
+            LocalStorage.SetItemAsync("User", loginDto.Username);
+            NavigationManager.NavigateTo("/active-orders");
+        }
+        else
+        {
+            error = "Invalid username or password";
+            errorVisible = true;
+        }
+
+        isSubmitting = false;
+    }
+
+    class LoginDto
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
+    List<LoginDto> users = new()
+    {
+        new LoginDto(){Username = "waiter", Password = "123"},
+        new LoginDto(){Username = "cashier", Password = "123"},
+    };
+}

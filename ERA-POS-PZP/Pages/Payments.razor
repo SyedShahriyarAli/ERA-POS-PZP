@@ -1,0 +1,94 @@
+﻿@using ERA_POS_PZP.Data
+
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="6">
+            <RadzenText>Amount</RadzenText>
+        </RadzenColumn>
+        <RadzenColumn Size="6">
+            <RadzenNumeric @bind-Value="@paymentAmout" Style="width: 100%" TextAlign="TextAlign.Center" id="txtAmount" />
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenButton Text="Cashless" ButtonStyle="ButtonStyle.Primary" Shade="Shade.Light" Variant="Variant.Filled" Style="width: 100%" Click="@(args => AddPayment("Cashless"))" />
+                <RadzenButton Text="Prepaid Card" ButtonStyle="ButtonStyle.Primary" Shade="Shade.Light" Variant="Variant.Filled" Style="width: 100%" Click="@(args => AddPayment("Prepay"))" />
+                <RadzenButton Text="Cash" ButtonStyle="ButtonStyle.Primary" Shade="Shade.Light" Variant="Variant.Filled" Style="width: 100%" Click="@(args => AddPayment("Cash"))" />
+                <RadzenButton Text="Card" ButtonStyle="ButtonStyle.Primary" Shade="Shade.Light" Variant="Variant.Filled" Style="width: 100%" Click="@(args => AddPayment("Card"))" />
+                <RadzenButton Text="Voucher" ButtonStyle="ButtonStyle.Primary" Shade="Shade.Light" Variant="Variant.Filled" Style="width: 100%" Click="@(args => AddPayment("Voucher"))" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenDataGrid @ref="paymentsGrid" AllowFiltering="false" AllowSorting="false" AllowPaging="false" TItem="Payment" Data="@payments" AllowColumnResize="false">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Payment" Property="Method" Title="Method"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Payment" Property="Amount" Title="Amount"></RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Payment" Width="70px" TextAlign="TextAlign.Center">
+                        <Template Context="data">
+                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Shade="Shade.Light" Variant="Variant.Flat" Click="@(args => RemovePayment(data))" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenButton Icon="save" Text="Proceed" Style="width: 100%" ButtonStyle="ButtonStyle.Success" Shade="Shade.Light" Click="@CloseDialog"/>
+        </RadzenColumn>
+    </RadzenRow>
+
+</RadzenStack>
+
+
+@code {
+
+    RadzenDataGrid<Payment> paymentsGrid;
+    double paid = 0;
+    double balance = 2500;
+    double paymentAmout = 2500;
+    double netAmount = 2500;
+    List<Payment> payments = new();
+
+    void AddPayment(string method)
+    {
+        if (paymentAmout > 0 && balance > 0)
+        {
+            payments.Add(new Payment() { Method = method, Amount = paymentAmout });
+
+            paid += paymentAmout;
+            balance = Math.Round(netAmount - paid, 2);
+            paymentAmout = balance;
+
+            paymentsGrid.Reload();
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    void RemovePayment(Payment payment)
+    {
+        payments.Remove(payment);
+        paid -= payment.Amount;
+        balance = Math.Round(netAmount - paid, 2);
+        paymentAmout = balance;
+
+
+        paymentsGrid.Reload();
+        InvokeAsync(StateHasChanged);
+    }
+
+    void CloseDialog()
+    {
+        NotificationService.Notify(NotificationSeverity.Success, "Transaction Completed!");
+        DialogService.Close();
+    }
+}
